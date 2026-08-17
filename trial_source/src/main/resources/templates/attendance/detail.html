@@ -86,6 +86,14 @@
 			const minutes = ('0' + today.getMinutes()).slice(-2);
 			return hours + ':' + minutes;
 		}
+		
+		// AttendanceControllerクラスのスコープに保存した内容を取得
+		const isExistNotEnter = /*[[${isExistNotEnter}]]*/ false;
+
+        // true だったらダイアログ（アラート）を表示する
+        if (isExistNotEnter) {
+            alert("過去日の勤怠に未入力があります。");
+        }
 	</script>
 
 </body>

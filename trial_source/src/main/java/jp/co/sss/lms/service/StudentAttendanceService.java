@@ -334,4 +334,31 @@ public class StudentAttendanceService {
 		return messageUtil.getMessage(Constants.PROP_KEY_ATTENDANCE_UPDATE_NOTICE);
 	}
 
+	/*
+	 * Task.25 過去日の未入力チェック
+	
+	# 概要 今日より前の過去日に、未入力の勤怠があるかどうかを判定する。
+	
+	# 処理 
+	* 今日の日付を取得する。
+	
+	*tStudentAttendanceMapper.notEnterCount を呼び出し、未入力件数を取得する。
+	
+	*件数が 0 より大きければ true、そうでなければ false を戻す。
+	 */
+	public Boolean notEnterCheck() throws ParseException {
+		
+		//Date today = Date.now();
+		Integer lmsUserId = null;
+		Short deleteFlg = null;
+		Date trainingDate = null;
+		Integer sumNotEnter = tStudentAttendanceMapper.notEnterCount(lmsUserId, deleteFlg, trainingDate);
+		if (sumNotEnter > 0) {
+			return true;
+		} else {
+			return false;
+		}
+		
+	}
+
 }

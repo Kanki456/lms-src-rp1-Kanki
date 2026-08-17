@@ -1,6 +1,10 @@
 package jp.co.sss.lms.controller;
 
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import jp.co.sss.lms.dto.AttendanceManagementDto;
 import jp.co.sss.lms.dto.LoginUserDto;
 import jp.co.sss.lms.form.AttendanceForm;
+import jp.co.sss.lms.mapper.TStudentAttendanceMapper;
 import jp.co.sss.lms.service.StudentAttendanceService;
 import jp.co.sss.lms.util.Constants;
 
@@ -30,6 +35,10 @@ public class AttendanceController {
 	@Autowired
 	private LoginUserDto loginUserDto;
 
+	// Task25 APIを呼び出すためにMapperインタフェースを用意
+	@Autowired
+	private TStudentAttendanceMapper tStudentAttendanceMapper;
+
 	/**
 	 * 勤怠管理画面 初期表示
 	 * 
@@ -46,6 +55,34 @@ public class AttendanceController {
 		List<AttendanceManagementDto> attendanceManagementDtoList = studentAttendanceService
 				.getAttendanceManagement(loginUserDto.getCourseId(), loginUserDto.getLmsUserId());
 		model.addAttribute("attendanceManagementDtoList", attendanceManagementDtoList);
+
+		// Task25
+		// Ⅱ．現在より過去に未入力が無いかチェック							
+
+		// a．SimpleDateFormatクラスでフォーマットパターンを設定する
+		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+
+		// b．現在日付を取得
+		LocalDate localDate = LocalDate.now();
+
+		// LocalDate を Date 型に変換する
+		Date today = Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
+
+		// 1．下記APIを呼び出し、過去日の未入力数をカウント
+		// API	勤怠情報（受講生入力）API．勤怠情報（受講生入力）未入力件数取得
+		// パラメータ	ログイン情報DTO．LMSユーザID
+		// パラメータ	削除フラグ（0）
+		// パラメータ	②-Ⅱで取得した現在日付
+		Integer sumNotEnter = tStudentAttendanceMapper.notEnterCount(loginUserDto.getLmsUserId(), (short) 0, today);
+
+		// 2．取得した未入力カウント数が0より大きい場合、trueを返し、過去日未入力確認ダイアログを表示					
+		boolean isExistNotEnter = false;
+		if (sumNotEnter > 0) {
+			isExistNotEnter = true;
+			model.addAttribute("isExistNotEnter", isExistNotEnter);
+		} else { // 3．それ以外はfalseを返す
+			isExistNotEnter = false;
+		}
 
 		return "attendance/detail";
 	}
