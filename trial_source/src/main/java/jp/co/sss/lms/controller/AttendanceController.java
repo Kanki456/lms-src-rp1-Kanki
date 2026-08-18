@@ -2,8 +2,6 @@ package jp.co.sss.lms.controller;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.time.ZoneId;
 import java.util.Date;
 import java.util.List;
 
@@ -61,19 +59,29 @@ public class AttendanceController {
 
 		// a．SimpleDateFormatクラスでフォーマットパターンを設定する
 		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+		// 現在日付を取得
+		Date date = new Date();
+		// SimpleDateFormatを適用（時刻の情報を切り捨て）
+		String formatDate = format.format(date);
+		// 下記try-catchの中で用いる変数を定義（try-catchの外で利用するため）
+		Integer sumNotEnter = null;
 
-		// b．現在日付を取得
-		LocalDate localDate = LocalDate.now();
+		// Date型に再変換するためにparseメソッドを用いる
+		// parseはtry-catchの中に書く必要がある
+		try {
+			// Date型に再変換
+			Date today = format.parse(formatDate);
 
-		// LocalDate を Date 型に変換する
-		Date today = Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
-
-		// 1．下記APIを呼び出し、過去日の未入力数をカウント
-		// API	勤怠情報（受講生入力）API．勤怠情報（受講生入力）未入力件数取得
-		// パラメータ	ログイン情報DTO．LMSユーザID
-		// パラメータ	削除フラグ（0）
-		// パラメータ	②-Ⅱで取得した現在日付
-		Integer sumNotEnter = tStudentAttendanceMapper.notEnterCount(loginUserDto.getLmsUserId(), (short) 0, today);
+			// 1．下記APIを呼び出し、過去日の未入力数をカウント
+			// API	勤怠情報（受講生入力）API．勤怠情報（受講生入力）未入力件数取得
+			// パラメータ	ログイン情報DTO．LMSユーザID
+			// パラメータ	削除フラグ（0）
+			// パラメータ	②-Ⅱで取得した現在日付
+			sumNotEnter = tStudentAttendanceMapper.notEnterCount(loginUserDto.getLmsUserId(), (short) 0, today);
+		} catch (ParseException e) {
+			// Date型→String型→Date型の順で再変換しているため、この例外は発生しない
+			e.printStackTrace();
+		}
 
 		// 2．取得した未入力カウント数が0より大きい場合、trueを返し、過去日未入力確認ダイアログを表示					
 		boolean isExistNotEnter = false;
