@@ -1,8 +1,7 @@
 package jp.co.sss.lms.service;
 
 import java.text.ParseException;
-import java.time.LocalDate;
-import java.time.ZoneId;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -336,32 +335,44 @@ public class StudentAttendanceService {
 		return messageUtil.getMessage(Constants.PROP_KEY_ATTENDANCE_UPDATE_NOTICE);
 	}
 
-	/*
-	 * Task25 過去日の未入力チェック
-	 * 
-	 * 概要 今日より前の過去日に、未入力の勤怠があるかどうかを判定する。
-	 */
 	/**
+	 * Task25 過去日の未入力チェック
 	 * 
 	 * @return true: 未入力の勤怠がある場合, false: ない場合
 	 * @throws ParseException
 	 */
 	public Boolean notEnterCheck() throws ParseException {
 
-		Integer lmsUserId = null;
-		Short deleteFlg = null;
+		// a．SimpleDateFormatクラスでフォーマットパターンを設定する
+		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+		// 現在日付を取得
+		Date date = new Date();
+		// SimpleDateFormatを適用（時刻の情報を切り捨て）
+		String formatDate = format.format(date);
+		// 下記try-catchの中で用いる変数を定義（try-catchの外で利用するため）
+		Integer sumNotEnter = null;
 
-		// 今日の日付を取得する。
-		LocalDate localDate = LocalDate.now();
+		// Date型に再変換するためにparseメソッドを用いる
+		// parseはtry-catchの中に書く必要がある
+		try {
+			// Date型に再変換
+			Date today = format.parse(formatDate);
 
-		// LocalDate を Date 型に変換する
-		Date today = Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
-
-		// *tStudentAttendanceMapper.notEnterCount を呼び出し、未入力件数を取得する。
-		Integer sumNotEnter = tStudentAttendanceMapper.notEnterCount(lmsUserId, deleteFlg, today);
+			// 1．下記APIを呼び出し、過去日の未入力数をカウント
+			// API	勤怠情報（受講生入力）API．勤怠情報（受講生入力）未入力件数取得
+			// パラメータ	ログイン情報DTO．LMSユーザID
+			// パラメータ	削除フラグ（0）
+			// パラメータ	②-Ⅱで取得した現在日付
+			sumNotEnter = tStudentAttendanceMapper.notEnterCount(loginUserDto.getLmsUserId(), (short) 0, today);
+		} catch (ParseException e) {
+			// Date型→String型→Date型の順で再変換しているため、この例外は発生しない
+			e.printStackTrace();
+			throw e;
+		}
 
 		// 件数が 0 より大きければ true、そうでなければ false を戻す
-		if (sumNotEnter > 0) {
+		// nullチェックを兼ねている
+		if (sumNotEnter != null && sumNotEnter > 0) {
 			return true;
 		} else {
 			return false;

@@ -1,8 +1,6 @@
 package jp.co.sss.lms.controller;
 
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +13,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import jp.co.sss.lms.dto.AttendanceManagementDto;
 import jp.co.sss.lms.dto.LoginUserDto;
 import jp.co.sss.lms.form.AttendanceForm;
-import jp.co.sss.lms.mapper.TStudentAttendanceMapper;
 import jp.co.sss.lms.service.StudentAttendanceService;
 import jp.co.sss.lms.util.Constants;
 
@@ -33,10 +30,6 @@ public class AttendanceController {
 	@Autowired
 	private LoginUserDto loginUserDto;
 
-	// Task25 APIを呼び出すためにMapperインタフェースを用意
-	@Autowired
-	private TStudentAttendanceMapper tStudentAttendanceMapper;
-
 	/**
 	 * 勤怠管理画面 初期表示
 	 * 
@@ -47,7 +40,7 @@ public class AttendanceController {
 	 * @throws ParseException
 	 */
 	@RequestMapping(path = "/detail", method = RequestMethod.GET)
-	public String index(Model model) {
+	public String index(Model model) throws ParseException {
 
 		// 勤怠一覧の取得
 		List<AttendanceManagementDto> attendanceManagementDtoList = studentAttendanceService
@@ -55,41 +48,13 @@ public class AttendanceController {
 		model.addAttribute("attendanceManagementDtoList", attendanceManagementDtoList);
 
 		// Task25
-		// Ⅱ．現在より過去に未入力が無いかチェック							
+		// 現在より過去に未入力が無いかチェック	
+		// ServiceクラスのnotEnterCheck()メソッドを呼び出す
+		boolean isExistNotEnter = studentAttendanceService.notEnterCheck();
 
-		// a．SimpleDateFormatクラスでフォーマットパターンを設定する
-		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-		// 現在日付を取得
-		Date date = new Date();
-		// SimpleDateFormatを適用（時刻の情報を切り捨て）
-		String formatDate = format.format(date);
-		// 下記try-catchの中で用いる変数を定義（try-catchの外で利用するため）
-		Integer sumNotEnter = null;
-
-		// Date型に再変換するためにparseメソッドを用いる
-		// parseはtry-catchの中に書く必要がある
-		try {
-			// Date型に再変換
-			Date today = format.parse(formatDate);
-
-			// 1．下記APIを呼び出し、過去日の未入力数をカウント
-			// API	勤怠情報（受講生入力）API．勤怠情報（受講生入力）未入力件数取得
-			// パラメータ	ログイン情報DTO．LMSユーザID
-			// パラメータ	削除フラグ（0）
-			// パラメータ	②-Ⅱで取得した現在日付
-			sumNotEnter = tStudentAttendanceMapper.notEnterCount(loginUserDto.getLmsUserId(), (short) 0, today);
-		} catch (ParseException e) {
-			// Date型→String型→Date型の順で再変換しているため、この例外は発生しない
-			e.printStackTrace();
-		}
-
-		// 2．取得した未入力カウント数が0より大きい場合、trueを返し、過去日未入力確認ダイアログを表示					
-		boolean isExistNotEnter = false;
-		if (sumNotEnter > 0) {
-			isExistNotEnter = true;
+		// trueのとき（過去日未入力があるとき）過去日未入力確認ダイアログを表示					
+		if (isExistNotEnter) {
 			model.addAttribute("isExistNotEnter", isExistNotEnter);
-		} else { // 3．それ以外はfalseを返す
-			isExistNotEnter = false;
 		}
 
 		return "attendance/detail";
