@@ -249,6 +249,18 @@ public class StudentAttendanceService {
 			dailyAttendanceForm
 					.setTrainingStartTime(attendanceManagementDto.getTrainingStartTime());
 			dailyAttendanceForm.setTrainingEndTime(attendanceManagementDto.getTrainingEndTime());
+			/*
+			 * 出勤時間（時）＝	勤怠管理画面用DTOリスト[n]．勤怠Utilを使用して出勤時間の時間を抜き出す
+			 * 出勤時間（分）＝	勤怠管理画面用DTOリスト[n]．勤怠Utilを使用して出勤時間の分を抜き出す
+			 * 退勤時間（時）＝	勤怠管理画面用DTOリスト[n]．勤怠Utilを使用して退勤時間の時間を抜き出す
+			 * 退勤時間（分）＝	勤怠管理画面用DTOリスト[n]．勤怠Utilを使用して退勤時間の分を抜き出す
+			 * 
+			 */
+			// 出勤時間（時）＝	勤怠管理画面用DTOリスト[n]．勤怠Utilを使用して出勤時間の時間を抜き出す
+			String timeString = attendanceManagementDto.getTrainingStartTime();
+			Integer startHour = Integer.parseInt(timeString.substring(0, 2));
+			dailyAttendanceForm.setTrainingStartTimeHour(startHour);
+			
 			if (attendanceManagementDto.getBlankTime() != null) {
 				dailyAttendanceForm.setBlankTime(attendanceManagementDto.getBlankTime());
 				dailyAttendanceForm.setBlankTimeValue(String.valueOf(

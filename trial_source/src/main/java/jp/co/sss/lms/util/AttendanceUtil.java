@@ -186,5 +186,10 @@ public class AttendanceUtil {
 		}
 		return minuteMap;
 	}
+	
+	// 時間（時）の切り出し
+	//public Integer getHour(String time) {
+	//	
+	//}
 
 }
