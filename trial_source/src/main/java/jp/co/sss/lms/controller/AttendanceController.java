@@ -33,6 +33,7 @@ public class AttendanceController {
 	/**
 	 * 勤怠管理画面 初期表示
 	 * 
+	 * @Author KankiYuma - Task.25
 	 * @param lmsUserId
 	 * @param courseId
 	 * @param model
@@ -47,15 +48,11 @@ public class AttendanceController {
 				.getAttendanceManagement(loginUserDto.getCourseId(), loginUserDto.getLmsUserId());
 		model.addAttribute("attendanceManagementDtoList", attendanceManagementDtoList);
 
-		// Task25
-		// 現在より過去に未入力が無いかチェック	
-		// ServiceクラスのnotEnterCheck()メソッドを呼び出す
+		// 現在より過去に未入力が無いかチェック
 		boolean isExistNotEnter = studentAttendanceService.notEnterCheck();
 
-		// trueのとき（過去日未入力があるとき）過去日未入力確認ダイアログを表示					
-		if (isExistNotEnter) {
-			model.addAttribute("isExistNotEnter", isExistNotEnter);
-		}
+		// リクエストスコープに保存しattendance/detailを返す
+		model.addAttribute("isExistNotEnter", isExistNotEnter);
 
 		return "attendance/detail";
 	}
