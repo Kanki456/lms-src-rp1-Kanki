@@ -256,10 +256,34 @@ public class StudentAttendanceService {
 			 * 退勤時間（分）＝	勤怠管理画面用DTOリスト[n]．勤怠Utilを使用して退勤時間の分を抜き出す
 			 * 
 			 */
+
 			// 出勤時間（時）＝	勤怠管理画面用DTOリスト[n]．勤怠Utilを使用して出勤時間の時間を抜き出す
-			String timeString = attendanceManagementDto.getTrainingStartTime();
-			Integer startHour = Integer.parseInt(timeString.substring(0, 2));
+			// 出勤時間（分）＝	勤怠管理画面用DTOリスト[n]．勤怠Utilを使用して出勤時間の分を抜き出す
+			String startTimeString = attendanceManagementDto.getTrainingStartTime();
+			Integer startHour = null;
+			Integer startMinute = null;
+			if (startTimeString == null || startTimeString.length() < 5) {
+				continue;
+			} else {
+				startHour = Integer.parseInt(startTimeString.substring(0, 2));
+				startMinute = Integer.parseInt(startTimeString.substring(3, 5));
+			}
 			dailyAttendanceForm.setTrainingStartTimeHour(startHour);
+			dailyAttendanceForm.setTrainingStartTimeMinute(startMinute);
+
+			// 退勤時間（時）＝	勤怠管理画面用DTOリスト[n]．勤怠Utilを使用して退勤時間の時間を抜き出す
+			// 退勤時間（分）＝	勤怠管理画面用DTOリスト[n]．勤怠Utilを使用して退勤時間の分を抜き出す
+			String endTimeString = attendanceManagementDto.getTrainingEndTime();
+			Integer endHour = null;
+			Integer endMinute = null;
+			if (endTimeString == null || endTimeString.length() < 5) {
+				continue;
+			} else {
+				endHour = Integer.parseInt(endTimeString.substring(0, 2));
+				endMinute = Integer.parseInt(endTimeString.substring(3, 5));
+			}
+			dailyAttendanceForm.setTrainingEndTimeHour(endHour);
+			dailyAttendanceForm.setTrainingEndTimeMinute(endMinute);
 
 			if (attendanceManagementDto.getBlankTime() != null) {
 				dailyAttendanceForm.setBlankTime(attendanceManagementDto.getBlankTime());
