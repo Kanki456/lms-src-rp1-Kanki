@@ -214,12 +214,22 @@ public class StudentAttendanceService {
 	public AttendanceForm setAttendanceForm(
 			List<AttendanceManagementDto> attendanceManagementDtoList) {
 
+		// Task.26 画面レイアウト設計書③.勤怠FORMの設定
+		// 勤怠FORMを生成
 		AttendanceForm attendanceForm = new AttendanceForm();
 		attendanceForm.setAttendanceList(new ArrayList<DailyAttendanceForm>());
+		// LMSユーザIDの取得
 		attendanceForm.setLmsUserId(loginUserDto.getLmsUserId());
+		// ユーザ名の取得
 		attendanceForm.setUserName(loginUserDto.getUserName());
+		// 途中退校フラグの取得
 		attendanceForm.setLeaveFlg(loginUserDto.getLeaveFlg());
+		// 中抜け時間（選択肢）の取得　勤怠Utilを使用して選択肢用の中抜け時間マップを取得
 		attendanceForm.setBlankTimes(attendanceUtil.setBlankTime());
+		// 時間マップ（選択肢）の取得　勤怠Utilを使用して選択肢用の時間マップを取得
+		attendanceForm.setHourMap(attendanceUtil.getHourMap());
+		// 分マップ（選択肢）の取得　勤怠Utilを使用して選択肢用の分マップを取得
+		attendanceForm.setMinuteMap(attendanceUtil.getMinuteMap());
 
 		// 途中退校している場合のみ設定
 		if (loginUserDto.getLeaveDate() != null) {

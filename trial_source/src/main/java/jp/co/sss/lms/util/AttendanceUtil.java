@@ -146,5 +146,45 @@ public class AttendanceUtil {
 		}
 		return false;
 	}
+	
+	/**
+	 * 時間マップ
+	 * 
+	 * @return 時間
+	 */
+	public LinkedHashMap<Integer, String> getHourMap() {
+		
+		// 時間マップ　LinkedHashMap<Integer, String>を生成する
+		LinkedHashMap<Integer, String> hourMap = new LinkedHashMap<>();
+		// 時間マップに{null,""}を追加する
+		hourMap.put(null, "");
+		// [loop] 初期値i=0; i<24; i++
+		for (int i = 0; i < 24; i++) {
+			// 時間マップに{i,String.format("%02d", i)}を追加する。
+			hourMap.put(i,String.format("%02d", i));
+			// [loop end]
+		}
+		return hourMap;
+	}
+	
+	/**
+	 * 分マップ
+	 * 
+	 * @return 分
+	 */
+	public LinkedHashMap<Integer, String> getMinuteMap() {
+		
+		// 分マップ　LinkedHashMap<Integer, String>を生成する
+		LinkedHashMap<Integer, String> minuteMap = new LinkedHashMap<>();
+		// 分マップに{null,""}を追加する
+		minuteMap.put(null, "");
+		// [loop] 初期値i=0; i<60; i++
+		for (int i = 0; i < 60; i++) {
+			// 時間マップに{i,String.format("%02d", i)}を追加する。
+			minuteMap.put(i,String.format("%02d", i));
+			// [loop end]
+		}
+		return minuteMap;
+	}
 
 }
