@@ -33,7 +33,7 @@ public class AttendanceController {
 	/**
 	 * 勤怠管理画面 初期表示
 	 * 
-	 * @Author KankiYuma - Task.25
+	 * @author KankiYuma - Task.25
 	 * @param lmsUserId
 	 * @param courseId
 	 * @param model
@@ -130,6 +130,7 @@ public class AttendanceController {
 	/**
 	 * 勤怠情報直接変更画面 『更新』ボタン押下
 	 * 
+	 * @author KankiYuma - Task.26
 	 * @param attendanceForm
 	 * @param model
 	 * @param result
@@ -149,6 +150,7 @@ public class AttendanceController {
 		List<AttendanceManagementDto> attendanceManagementDtoList = studentAttendanceService
 				.getAttendanceManagement(loginUserDto.getCourseId(), loginUserDto.getLmsUserId());
 		model.addAttribute("attendanceManagementDtoList", attendanceManagementDtoList);
+		// 入力されたフォームデータをスコープに保存
 		model.addAttribute("attendanceForm", attendanceForm);
 
 		return "attendance/detail";

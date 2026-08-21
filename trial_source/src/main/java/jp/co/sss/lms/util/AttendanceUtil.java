@@ -151,16 +151,13 @@ public class AttendanceUtil {
 	 * 時間マップ
 	 * 
 	 * @author KankiYuma - Task.26
-	 * @return 時間マップ
+	 * @return 1時間刻みの時間（数値）マップ
 	 */
 	public LinkedHashMap<Integer, String> getHourMap() {
 
-		// 時間マップ　LinkedHashMap<Integer, String>を生成する
 		LinkedHashMap<Integer, String> hourMap = new LinkedHashMap<>();
-		// 時間マップに{null,""}を追加する
 		hourMap.put(null, "");
 		for (int i = 0; i < 24; i++) {
-			// 時間マップに{i,String.format("%02d", i)}を追加する。
 			hourMap.put(i, String.format("%02d", i));
 		}
 		return hourMap;
@@ -170,52 +167,53 @@ public class AttendanceUtil {
 	 * 分マップ
 	 * 
 	 * @author KankiYuma - Task.26
-	 * @return 分マップ
+	 * @return 1分刻みの分（数値）マップ
 	 */
 	public LinkedHashMap<Integer, String> getMinuteMap() {
 
-		// 分マップ　LinkedHashMap<Integer, String>を生成する
 		LinkedHashMap<Integer, String> minuteMap = new LinkedHashMap<>();
-		// 分マップに{null,""}を追加する
 		minuteMap.put(null, "");
 		for (int i = 0; i < 60; i++) {
-			// 時間マップに{i,String.format("%02d", i)}を追加する。
 			minuteMap.put(i, String.format("%02d", i));
 		}
 		return minuteMap;
 	}
 
 	/**
-	 * 時間（時）の切り出し
+	 * 時間（時）の切り出し hh:mm→hh
 	 * 
 	 * @author KankiYuma - Task.26
-	 * @param timeString
-	 * @return 時間（時）
+	 * @param timeString 開始時刻or終了時刻
+	 * @return 出退勤時間（時間）
 	 */
 	public Integer getHour(String timeString) {
 		Integer timeHour = null;
+		// 時刻の形式に合わない場合nullを返す
 		if (timeString == null || timeString.length() < 5) {
 			timeHour = null;
 
 		} else {
+			// 「hh:mm」形式の「hh」の部分をInteger型にして返す
 			timeHour = Integer.parseInt(timeString.substring(0, 2));
 		}
 		return timeHour;
 	}
 
 	/**
-	 * 時間（分）の切り出し
+	 * 時間（分）の切り出し hh:mm→mm
 	 * 
 	 * @author KankiYuma - Task.26
-	 * @param timeString
-	 * @return 時間（分）
+	 * @param timeString 開始時刻or終了時刻
+	 * @return 出退勤時間（分）
 	 */
 	public Integer getMinute(String timeString) {
 		Integer timeMinute = null;
+		// 時刻の形式に合わない場合nullを返す
 		if (timeString == null || timeString.length() < 5) {
 			timeMinute = null;
 
 		} else {
+			// 「hh:mm」形式の「mm」の部分をInteger型にして返す
 			timeMinute = Integer.parseInt(timeString.substring(3, 5));
 		}
 		return timeMinute;
