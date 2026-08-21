@@ -146,50 +146,79 @@ public class AttendanceUtil {
 		}
 		return false;
 	}
-	
+
 	/**
 	 * 時間マップ
 	 * 
-	 * @return 時間
+	 * @author KankiYuma - Task.26
+	 * @return 時間マップ
 	 */
 	public LinkedHashMap<Integer, String> getHourMap() {
-		
+
 		// 時間マップ　LinkedHashMap<Integer, String>を生成する
 		LinkedHashMap<Integer, String> hourMap = new LinkedHashMap<>();
 		// 時間マップに{null,""}を追加する
 		hourMap.put(null, "");
-		// [loop] 初期値i=0; i<24; i++
 		for (int i = 0; i < 24; i++) {
 			// 時間マップに{i,String.format("%02d", i)}を追加する。
-			hourMap.put(i,String.format("%02d", i));
-			// [loop end]
+			hourMap.put(i, String.format("%02d", i));
 		}
 		return hourMap;
 	}
-	
+
 	/**
 	 * 分マップ
 	 * 
-	 * @return 分
+	 * @author KankiYuma - Task.26
+	 * @return 分マップ
 	 */
 	public LinkedHashMap<Integer, String> getMinuteMap() {
-		
+
 		// 分マップ　LinkedHashMap<Integer, String>を生成する
 		LinkedHashMap<Integer, String> minuteMap = new LinkedHashMap<>();
 		// 分マップに{null,""}を追加する
 		minuteMap.put(null, "");
-		// [loop] 初期値i=0; i<60; i++
 		for (int i = 0; i < 60; i++) {
 			// 時間マップに{i,String.format("%02d", i)}を追加する。
-			minuteMap.put(i,String.format("%02d", i));
-			// [loop end]
+			minuteMap.put(i, String.format("%02d", i));
 		}
 		return minuteMap;
 	}
-	
-	// 時間（時）の切り出し
-	//public Integer getHour(String time) {
-	//	
-	//}
+
+	/**
+	 * 時間（時）の切り出し
+	 * 
+	 * @author KankiYuma - Task.26
+	 * @param timeString
+	 * @return 時間（時）
+	 */
+	public Integer getHour(String timeString) {
+		Integer timeHour = null;
+		if (timeString == null || timeString.length() < 5) {
+			timeHour = null;
+
+		} else {
+			timeHour = Integer.parseInt(timeString.substring(0, 2));
+		}
+		return timeHour;
+	}
+
+	/**
+	 * 時間（分）の切り出し
+	 * 
+	 * @author KankiYuma - Task.26
+	 * @param timeString
+	 * @return 時間（分）
+	 */
+	public Integer getMinute(String timeString) {
+		Integer timeMinute = null;
+		if (timeString == null || timeString.length() < 5) {
+			timeMinute = null;
+
+		} else {
+			timeMinute = Integer.parseInt(timeString.substring(3, 5));
+		}
+		return timeMinute;
+	}
 
 }

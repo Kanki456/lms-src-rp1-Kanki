@@ -208,6 +208,7 @@ public class StudentAttendanceService {
 	/**
 	 * 勤怠フォームへ設定
 	 * 
+	 * @author KankiYuma - Task.26
 	 * @param attendanceManagementDtoList
 	 * @return 勤怠編集フォーム
 	 */
@@ -249,40 +250,21 @@ public class StudentAttendanceService {
 			dailyAttendanceForm
 					.setTrainingStartTime(attendanceManagementDto.getTrainingStartTime());
 			dailyAttendanceForm.setTrainingEndTime(attendanceManagementDto.getTrainingEndTime());
-			/*
-			 * 出勤時間（時）＝	勤怠管理画面用DTOリスト[n]．勤怠Utilを使用して出勤時間の時間を抜き出す
-			 * 出勤時間（分）＝	勤怠管理画面用DTOリスト[n]．勤怠Utilを使用して出勤時間の分を抜き出す
-			 * 退勤時間（時）＝	勤怠管理画面用DTOリスト[n]．勤怠Utilを使用して退勤時間の時間を抜き出す
-			 * 退勤時間（分）＝	勤怠管理画面用DTOリスト[n]．勤怠Utilを使用して退勤時間の分を抜き出す
-			 * 
-			 */
 
 			// 出勤時間（時）＝	勤怠管理画面用DTOリスト[n]．勤怠Utilを使用して出勤時間の時間を抜き出す
-			// 出勤時間（分）＝	勤怠管理画面用DTOリスト[n]．勤怠Utilを使用して出勤時間の分を抜き出す
 			String startTimeString = attendanceManagementDto.getTrainingStartTime();
-			Integer startHour = null;
-			Integer startMinute = null;
-			if (startTimeString == null || startTimeString.length() < 5) {
-				continue;
-			} else {
-				startHour = Integer.parseInt(startTimeString.substring(0, 2));
-				startMinute = Integer.parseInt(startTimeString.substring(3, 5));
-			}
+			Integer startHour = attendanceUtil.getHour(startTimeString);
 			dailyAttendanceForm.setTrainingStartTimeHour(startHour);
+			// 出勤時間（分）＝	勤怠管理画面用DTOリスト[n]．勤怠Utilを使用して出勤時間の分を抜き出す
+			Integer startMinute = attendanceUtil.getMinute(startTimeString);
 			dailyAttendanceForm.setTrainingStartTimeMinute(startMinute);
 
 			// 退勤時間（時）＝	勤怠管理画面用DTOリスト[n]．勤怠Utilを使用して退勤時間の時間を抜き出す
-			// 退勤時間（分）＝	勤怠管理画面用DTOリスト[n]．勤怠Utilを使用して退勤時間の分を抜き出す
 			String endTimeString = attendanceManagementDto.getTrainingEndTime();
-			Integer endHour = null;
-			Integer endMinute = null;
-			if (endTimeString == null || endTimeString.length() < 5) {
-				continue;
-			} else {
-				endHour = Integer.parseInt(endTimeString.substring(0, 2));
-				endMinute = Integer.parseInt(endTimeString.substring(3, 5));
-			}
+			Integer endHour = attendanceUtil.getHour(endTimeString);
 			dailyAttendanceForm.setTrainingEndTimeHour(endHour);
+			// 退勤時間（分）＝	勤怠管理画面用DTOリスト[n]．勤怠Utilを使用して退勤時間の分を抜き出す
+			Integer endMinute = attendanceUtil.getMinute(endTimeString);
 			dailyAttendanceForm.setTrainingEndTimeMinute(endMinute);
 
 			if (attendanceManagementDto.getBlankTime() != null) {
@@ -404,6 +386,38 @@ public class StudentAttendanceService {
 
 		// 件数が 0 より大きければ true、そうでなければ false を戻す
 		return sumNotEnter > 0;
+
+	}
+
+	/*
+	 * Task.26 入力された出退勤の{時間}{分}をhh:mm形式に変換し、AttendanceFormにセットする
+	
+	# 概要 フォーム内の「時」と「分」の入力を、「hh:mm」形式の文字列に変換してセットする。
+	
+	# 処理 
+	[loop] DailyAttendanceForm : フォーム内のリスト 
+	* [if 出勤の「時」「分」が共に入力されている場合] %02d:%02d 形式で trainingStartTime にセットする。 
+	* [if 退勤の「時」「分」が共に入力されている場合] %02d:%02d 形式で trainingEndTime にセットする。
+	[loop end]
+	 */
+	public void formatConversion(AttendanceForm attendanceForm) {
+		for (DailyAttendanceForm dailyAttendanceForm : attendanceForm.getAttendanceList()) {
+			if (dailyAttendanceForm.getTrainingStartTimeHour() != null
+					&& dailyAttendanceForm.getTrainingStartTimeMinute() != null) {
+				dailyAttendanceForm
+						.setTrainingStartTime(String.format("%02d:%02d", dailyAttendanceForm.getTrainingStartTimeHour(),
+								dailyAttendanceForm.getTrainingStartTimeMinute()));
+
+			}
+
+			if (dailyAttendanceForm.getTrainingEndTimeHour() != null
+					&& dailyAttendanceForm.getTrainingEndTimeMinute() != null) {
+				dailyAttendanceForm
+						.setTrainingEndTime(String.format("%02d:%02d", dailyAttendanceForm.getTrainingEndTimeHour(),
+								dailyAttendanceForm.getTrainingEndTimeMinute()));
+
+			}
+		}
 
 	}
 
